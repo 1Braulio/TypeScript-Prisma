@@ -1,2 +1,3 @@
-export { default as postRouter } from "./post";
-export { default as userRouter } from "./user";
+export { default as personRouter } from "./person";
+export { default as playlistRouter } from "./playlist";
+export { default as songRouter } from "./song";

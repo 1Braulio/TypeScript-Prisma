@@ -6,32 +6,72 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  name  String?
-  email String  @unique
-  password String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+//model User {
+//  id         Int      @id @default(autoincrement())
+//  email      String   @unique
+//  name       String?
+//  created_at DateTime @default(now())
+//  updated_at DateTime @updatedAt
+//
+//  posts Post[]
+//
+//  @@map("users")
+//}
 
-  posts Post[]
+//model Post {
+//  id         Int      @id @default(autoincrement())
+//  title      String
+//  content    String?
+//  published  Boolean  @default(false)
+//  author     User     @relation(fields: [authorId], references: [id])
+//  authorId   Int
+//  created_at DateTime @default(now())
+//  updated_at DateTime @updatedAt
+//
+//  @@map("posts")
+//}
 
-  @@map("users")
+model Person {
+  id            Int        @id @default(autoincrement())
+  name          String     @unique
+  email         String
+  password      String
+  last_session  DateTime   @default(now())
+  date_born     DateTime?
+  created_at    DateTime   @default(now())
+  update_at     DateTime   @updatedAt
+  playlists     Playlist[]
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+model Song {
+  id         Int       @id @default(autoincrement())
+  name       String
+  private    Boolean   @default(false)  
+  artist     String?
+  album      String?
+  year       Int?
+  genre      String?
+  duration   Int?
+  playlists  SongsOnPlaylists[]
+}
 
-  @@map("posts")
+model Playlist {
+  id        Int    @id @default(autoincrement())
+  name      String
+  person    Person @relation(fields: [person_id], references: [id])
+  person_id Int    
+  songs     SongsOnPlaylists[]
+}
+
+model SongsOnPlaylists {
+  playlist    Playlist @relation(fields: [playlistId], references: [id])
+  playlistId  Int
+  song        Song @relation(fields: [songId], references: [id])
+  songId      Int
+
+  @@id([playlistId, songId])
 }
